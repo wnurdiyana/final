@@ -853,7 +853,7 @@ export default function Home() {
 
   const handleNav = (id: string) => {
     const el = document.getElementById(id);
-    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
+    if (el) window.scrollTo({ top: el.offsetTop, behavior: "smooth" });
   };
 
   return (
