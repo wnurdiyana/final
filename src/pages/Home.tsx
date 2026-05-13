@@ -500,6 +500,12 @@ try {
       if (!res.ok) throw new Error(data.error ?? "Registration failed");
       setSavedId(data.registration?.id ?? null);
       setSubmitted(true);
+
+      // Force scroll to registration section to prevent jump to Organizers
+      setTimeout(() => {
+        const el = document.getElementById("registration");
+        if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
+      }, 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
