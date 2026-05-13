@@ -484,7 +484,7 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
     }
     if (category === "student") payload.studentIdFile = studentIdFileName;
     try {
-      const res = await fetch("https://particleswithoutborders-production-da97.up.railway.app/api/registrations", {
+      const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
