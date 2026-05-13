@@ -510,7 +510,7 @@ try {
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl bg-white p-8 rounded-2xl border border-cyan-100 shadow-sm space-y-6">
       {submitted ? (
-        <div className="text-center py-10">
+        <div className="text-center py-20 min-h-[600px] flex flex-col items-center justify-center">
           <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </div>
