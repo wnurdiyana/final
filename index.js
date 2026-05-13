@@ -1,8 +1,17 @@
 import express from "express";
 import cors from "cors";
+import { createClient } from "@supabase/supabase-js";
 
 const app = express();
 
+// ── Supabase ────────────────────────────────────────────────
+// Use SERVICE_ROLE key here (server-side only, never expose to client)
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// ── Middleware ───────────────────────────────────────────────
 app.use(cors({
   origin: [
     "https://particles-without-borders-5nhz-two.vercel.app",
@@ -10,9 +19,9 @@ app.use(cors({
     "http://localhost:5000"
   ]
 }));
-
 app.use(express.json());
 
+// ── Email ────────────────────────────────────────────────────
 async function sendConfirmationEmail(to, name, registrationId, category) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -44,33 +53,77 @@ async function sendConfirmationEmail(to, name, registrationId, category) {
 
   if (!res.ok) {
     const err = await res.json();
-    console.error("Email error:", err);
+    throw new Error(JSON.stringify(err));
   }
 }
 
+// ── Routes ───────────────────────────────────────────────────
 app.post("/api/registrations", async (req, res) => {
-  try {
-    const id = "REG-" + Math.random().toString(36).slice(2, 10).toUpperCase();
-    const { name, email, category } = req.body;
-    console.log("New registration:", req.body);
+  const { name, email, category } = req.body;
 
-    try {
-      await sendConfirmationEmail(email, name, id, category);
-    } catch (emailErr) {
-      console.error("Email error (non-fatal):", emailErr.message);
-    }
-
-    res.json({ ok: true, registration: { id } });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Registration failed. Please try again." });
+  if (!name || !email || !category) {
+    return res.status(400).json({ error: "name, email and category are required." });
   }
+
+  const id = "REG-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+
+  // 1. Save registration to Supabase
+  const { error: dbError } = await supabase
+    .from("registrations")
+    .insert({ id, name, email, category });
+
+  if (dbError) {
+    console.error("DB insert error:", dbError);
+    return res.status(500).json({ error: "Registration failed. Please try again." });
+  }
+
+  // 2. Send confirmation email & log result
+  let emailStatus = "sent";
+  let emailError  = null;
+
+  try {
+    await sendConfirmationEmail(email, name, id, category);
+  } catch (err) {
+    console.error("Email error (non-fatal):", err.message);
+    emailStatus = "failed";
+    emailError  = err.message;
+  }
+
+  await supabase.from("email_logs").insert({
+    registration_id: id,
+    to_email:        email,
+    subject:         "Registration Confirmed — Particles Without Borders 2026",
+    status:          emailStatus,
+    error_message:   emailError
+  });
+
+  res.json({ ok: true, registration: { id } });
+});
+
+// ── Payment status update (called by your payment provider webhook) ──
+app.post("/api/registrations/:id/payment", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body; // "paid" | "failed"
+
+  if (!["paid", "failed"].includes(status)) {
+    return res.status(400).json({ error: "status must be 'paid' or 'failed'." });
+  }
+
+  const { error } = await supabase
+    .from("registrations")
+    .update({ payment_status: status })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Payment update error:", error);
+    return res.status(500).json({ error: "Could not update payment status." });
+  }
+
+  res.json({ ok: true });
 });
 
 app.get("/", (req, res) => res.json({ status: "ok" }));
 
+// ── Start ────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
