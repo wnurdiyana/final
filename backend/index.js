@@ -30,7 +30,7 @@ async function sendConfirmationEmail(to, name, registrationId, category) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      from: "Particles Without Borders <onboarding@resend.dev>",
+      from: "Particles Without Borders <do-not-reply@particleswithoutborders.com>",
       to: [to],
       subject: "Registration Confirmed — Particles Without Borders 2026",
       html: `
