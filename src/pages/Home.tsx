@@ -453,6 +453,7 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    e.stopPropagation();
     if (isPresenter && !selectedTheme) {
       setError("Please select a conference theme for your paper.");
       return;
