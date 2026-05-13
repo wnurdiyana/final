@@ -2,6 +2,7 @@
   "version": 2,
   "builds": [
     {
+<<<<<<< HEAD
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -24,6 +25,30 @@
     {
       "src": "/(.*)",
       "dest": "/index.html"
+=======
+      "source": "/api/registrations",
+      "destination": "https://dtvarfhxnsovnbzsoeep.supabase.co/functions/v1/registrations"
+    },
+    {
+      "source": "/api/admin/registrations",
+      "destination": "https://dtvarfhxnsovnbzsoeep.supabase.co/functions/v1/admin-registrations"
+    },
+    {
+      "source": "/api/admin/registrations/:id/decision",
+      "destination": "https://dtvarfhxnsovnbzsoeep.supabase.co/functions/v1/admin-decision?id=:id"
+    },
+    {
+      "source": "/api/admin/registrations/:id/invoice",
+      "destination": "https://dtvarfhxnsovnbzsoeep.supabase.co/functions/v1/admin-invoice?id=:id"
+    },
+    {
+      "source": "/api/admin/registrations/:id/custom-email",
+      "destination": "https://dtvarfhxnsovnbzsoeep.supabase.co/functions/v1/admin-custom-email?id=:id"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+>>>>>>> a1c6427 (Fix: Resolve 404 errors, connect Supabase, and fix nav margin)
     }
   ]
 }
