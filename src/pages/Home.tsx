@@ -517,8 +517,15 @@ try {
           <p className="text-muted-foreground">An invoice and payment instructions will arrive in your inbox shortly.</p>
           <p className="mt-3 text-sm text-emerald-700 font-medium">Your submission is under review. Notification will be sent via email.</p>
           {savedId && <p className="mt-3 text-xs text-muted-foreground font-mono">Reference: {savedId}</p>}
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="mt-8 px-6 py-2 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all"
+          >
+            Back to Home
+          </button>
         </div>
       ) : (
+
         <>
           {/* Step 1: Category */}
           <div>
