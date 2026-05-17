@@ -69,7 +69,7 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      from: "Particles Without Borders <do-not-reply@send.particleswithoutborders.com>",
+      from: "Particles Without Borders <admin@send.particleswithoutborders.com>",
       to: [to],
       subject,
       html
