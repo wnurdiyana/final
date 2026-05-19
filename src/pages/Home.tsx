@@ -521,9 +521,9 @@ try {
             <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </div>
           <h3 className="text-2xl font-bold mb-2">Registration successful</h3>
-          <p className="text-muted-foreground">An invoice and payment instructions will arrive in your inbox shortly.</p>
-          <p className="mt-3 text-sm text-emerald-700 font-medium">Your submission is under review. Notification will be sent via email.</p>
-          {savedId && <p className="mt-3 text-xs text-muted-foreground font-mono">Reference: {savedId}</p>}
+          <p className="text-muted-foreground">A confirmation email with your unique registration ID has been sent to your inbox.</p>
+          <p className="mt-3 text-sm text-emerald-700 font-medium">Your invoice and payment instructions will arrive by email shortly.</p>
+          {savedId && <p className="mt-3 text-xs text-muted-foreground font-mono">Unique Registration ID: {savedId}</p>}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="mt-8 px-6 py-2 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all"
