@@ -10,15 +10,26 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+const allowedOrigins = [
+  "https://particleswithoutborders.com",
+  "https://www.particleswithoutborders.com",
+  "https://final-roan-beta-76.vercel.app",
+  process.env.FRONTEND_ORIGIN,
+  "http://localhost:5173"
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    "https://particleswithoutborders.com",
-    "https://www.particleswithoutborders.com",
-    "https://final-roan-beta-76.vercel.app",
-    process.env.FRONTEND_ORIGIN,
-    "http://localhost:5173"
-  ].filter(Boolean)
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin not allowed by CORS: ${origin}`));
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
+app.options("*", cors());
 app.use(express.json({ limit: "1mb" }));
 
 function generatePassword() {
@@ -211,6 +222,12 @@ app.post("/api/registrations", async (req, res) => {
 });
 
 app.get("/", (req, res) => res.json({ status: "ok" }));
+app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+export default app;
