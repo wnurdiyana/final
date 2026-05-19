@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const app = express();
 
-// ── Middleware ───────────────────────────────────────────────
+// Middleware
 app.use(cors({
   origin: [
     "https://particleswithoutborders.com",
@@ -16,62 +16,54 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ── Supabase - WITH SCHEMA CACHE FIX ────────────────────────
-// Create client with custom fetch to bypass cache issues
+// Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      persistSession: false
-    }
-  }
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// ── Helpers ──────────────────────────────────────────────────
+// Helper: Generate random password
 function generatePassword() {
-  return Math.random().toString(36).slice(-8).toUpperCase() + "!" + Math.random().toString(36).slice(-2).toUpperCase();
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let pwd = '';
+  for (let i = 0; i < 10; i++) {
+    pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pwd + '!';
 }
 
-async function sendConfirmationEmail(to, name, registrationId, category, loginData = null) {
-  const isPresenter = !!loginData;
-  const subject = isPresenter
+// Helper: Send email via Resend
+async function sendEmail(to, name, id, category, isPresenter, password) {
+  const subject = isPresenter 
     ? "Action Required: Your Submission Account for Particles Without Borders 2026"
     : "Registration Confirmed — Particles Without Borders 2026";
 
-  const html = isPresenter ? `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-      <h1 style="color: #0e7490;">Submission Account Created!</h1>
-      <p>Dear <strong>${name}</strong>,</p>
-      <p>Your registration as a presenter is confirmed. We have created a secure account for you to monitor your abstract review status and manage your invoice.</p>
-      <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; padding: 20px; margin: 24px 0;">
-        <p style="margin: 0 0 8px 0;"><strong>Reference ID:</strong> ${registrationId}</p>
-        <p style="margin: 0 0 8px 0;"><strong>Login Email:</strong> ${to}</p>
-        <p style="margin: 0 0 8px 0;"><strong>Temporary Password:</strong> ${loginData.password}</p>
-        <p style="margin: 16px 0 0 0; font-size: 13px; color: #64748b;">Please use these details to log into your author dashboard.</p>
-      </div>
-      <p>Our team will review your submission. You can check your status at any time via the dashboard.</p>
-      <p>Questions? Email us at <a href="mailto:secretariat@particleswithoutborders.org">secretariat@particleswithoutborders.org</a></p>
-      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders · KLCC, Kuala Lumpur · 16 November 2026</p>
-    </div>
-  ` : `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-      <h1 style="color: #0e7490;">Registration Confirmed!</h1>
-      <p>Dear <strong>${name}</strong>,</p>
-      <p>Thank you for registering as a listener for <strong>Particles Without Borders 2026</strong>.</p>
-      <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; padding: 20px; margin: 24px 0;">
-        <p style="margin: 0 0 8px 0;"><strong>Reference ID:</strong> ${registrationId}</p>
-        <p style="margin: 0 0 8px 0;"><strong>Category:</strong> ${category}</p>
-      </div>
-      <p>Your invoice and payment instructions will be sent to this email shortly. We look forward to seeing you in Kuala Lumpur!</p>
-      <p>Questions? Email us at <a href="mailto:secretariat@particleswithoutborders.org">secretariat@particleswithoutborders.org</a></p>
-      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders · KLCC, Kuala Lumpur · 16 November 2026</p>
-    </div>
-  `;
+  const html = isPresenter
+    ? `<div style="font-family: sans-serif; padding: 20px;">
+        <h2>Submission Account Created!</h2>
+        <p>Dear ${name},</p>
+        <p>Your registration as a presenter is confirmed.</p>
+        <div style="background: #f0f0f0; padding: 15px; margin: 20px 0;">
+          <p><strong>Reference ID:</strong> ${id}</p>
+          <p><strong>Email:</strong> ${to}</p>
+          <p><strong>Password:</strong> ${password}</p>
+        </div>
+        <p>Our team will review your submission.</p>
+        <p>Questions? Email: secretariat@particleswithoutborders.org</p>
+      </div>`
+    : `<div style="font-family: sans-serif; padding: 20px;">
+        <h2>Registration Confirmed!</h2>
+        <p>Dear ${name},</p>
+        <p>Thank you for registering as a listener for Particles Without Borders 2026.</p>
+        <div style="background: #f0f0f0; padding: 15px; margin: 20px 0;">
+          <p><strong>Reference ID:</strong> ${id}</p>
+          <p><strong>Category:</strong> ${category}</p>
+        </div>
+        <p>Your invoice will be sent shortly.</p>
+        <p>Questions? Email: secretariat@particleswithoutborders.org</p>
+      </div>`;
 
-  console.log(`[EMAIL] Sending to: ${to}`);
+  console.log(`[EMAIL] Sending to ${to}`);
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -81,41 +73,43 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
     },
     body: JSON.stringify({
       from: "Particles Without Borders <do-not-reply@particleswithoutborders.com>",
-      to: to, 
-      subject: subject,
-      html: html
+      to,
+      subject,
+      html
     })
   });
 
   if (!res.ok) {
     const err = await res.json();
-    console.error("❌ Email failed:", err);
-    throw new Error(`Email error: ${err.message}`);
+    console.error("[EMAIL ERROR]", err);
+    throw new Error(`Email failed: ${err.message}`);
   }
 
-  console.log(`✓ Email sent to ${to}`);
+  console.log(`[EMAIL] Sent successfully to ${to}`);
 }
 
-// ── Routes ───────────────────────────────────────────────────
+// Registration endpoint
 app.post("/api/registrations", async (req, res) => {
   const { name, email, category, subRole } = req.body;
 
-  console.log(`[REGISTER] ${name} (${email}) - ${category} - ${subRole}`);
+  console.log(`[REGISTER] name=${name}, email=${email}, category=${category}, subRole=${subRole}`);
 
+  // Validate input
   if (!name || !email || !category) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ error: "Missing required fields: name, email, category" });
   }
 
-  const id = "REG-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  const regId = "REG-" + Math.random().toString(36).substr(2, 8).toUpperCase();
   const isPresenter = subRole === "presenter";
-  let loginData = null;
+  let password = null;
 
   try {
-    // Step 1: Create presenter auth account if needed
+    // Step 1: Create presenter account if needed
     if (isPresenter) {
       console.log(`[AUTH] Creating account for ${email}`);
-      const password = generatePassword();
-      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+      password = generatePassword();
+      
+      const { error: authError } = await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true
@@ -125,110 +119,79 @@ app.post("/api/registrations", async (req, res) => {
         console.error("[AUTH ERROR]", authError);
         throw new Error("Failed to create account: " + authError.message);
       }
-
-      loginData = { password };
-      console.log(`✓ Auth account created`);
+      console.log(`[AUTH] Account created`);
     }
 
-    // Step 2: Save to registrations table
-    console.log(`[DB] Inserting registration ${id}`);
+    // Step 2: Insert into registrations table
+    console.log(`[DB] Inserting registration ${regId}`);
     
-    // Use raw SQL as a workaround for schema cache issues
-    const { data, error: insertError } = await supabase
-      .rpc('insert_registration', {
-        p_id: id,
-        p_name: name,
-        p_email: email,
-        p_category: category
-      })
-      .catch(async (e) => {
-        // If RPC doesn't exist, try direct insert
-        console.log("[DB] RPC not available, trying direct insert");
-        return await supabase
-          .from("registrations")
-          .insert({
-            id,
-            name,
-            email,
-            category,
-            payment_status: "pending"
-          });
+    const { error: insertError } = await supabase
+      .from("registrations")
+      .insert({
+        id: regId,
+        name,
+        email,
+        category,
+        payment_status: "pending"
       });
 
     if (insertError) {
       console.error("[DB ERROR]", insertError);
-      
-      // Try one more time with explicit schema
-      const { error: retryError } = await supabase
-        .from("registrations")
-        .insert({
-          id,
-          name,
-          email,
-          category,
-          payment_status: "pending"
-        });
-      
-      if (retryError) {
-        throw new Error("Database error: " + retryError.message);
-      }
+      throw new Error("Database error: " + insertError.message);
     }
 
-    console.log(`✓ Registration saved: ${id}`);
+    console.log(`[DB] Registration saved: ${regId}`);
 
-    // Step 3: Send email
+    // Step 3: Send confirmation email
     try {
-      await sendConfirmationEmail(email, name, id, category, loginData);
+      await sendEmail(email, name, regId, category, isPresenter, password);
     } catch (emailErr) {
       console.error("[EMAIL ERROR]", emailErr);
-      // Don't fail - registration succeeded even if email fails
+      // Don't fail the registration if email fails
     }
 
-    // Step 4: Log email attempt (best effort)
+    // Step 4: Log email (optional)
     try {
       await supabase.from("email_logs").insert({
-        registration_id: id,
+        registration_id: regId,
         to_email: email,
         subject: isPresenter ? "Account Created" : "Registration Confirmed",
         status: "sent"
-      }).catch(() => console.log("[INFO] email_logs logging skipped"));
-    } catch {
-      // Ignore email_logs errors
+      });
+    } catch (logErr) {
+      console.log("[INFO] Could not log email:", logErr.message);
     }
 
-    console.log(`✓ [COMPLETE] Registration successful: ${id}`);
+    console.log(`✓ [SUCCESS] Registration complete: ${regId}`);
 
     return res.json({
       ok: true,
-      registration: { id },
+      registration: { id: regId },
       message: "Registration successful! Check your email for confirmation."
     });
 
-  } catch (err) {
-    console.error("[ERROR]", err);
+  } catch (error) {
+    console.error("[REGISTRATION ERROR]", error);
     return res.status(500).json({
-      error: err instanceof Error ? err.message : "Registration failed"
+      error: error instanceof Error ? error.message : "Registration failed"
     });
   }
 });
 
+// Health check endpoints
 app.get("/", (req, res) => {
   res.json({ 
     status: "ok",
-    service: "Particles Without Borders API",
-    timestamp: new Date().toISOString()
+    service: "Particles Without Borders API"
   });
 });
 
 app.get("/health", (req, res) => {
-  res.json({ 
-    status: "healthy",
-    uptime: process.uptime()
-  });
+  res.json({ status: "healthy" });
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✓ Server started on port ${PORT}`);
-  console.log(`✓ Using Supabase: ${process.env.SUPABASE_URL}`);
+  console.log(`✓ Server running on port ${PORT}`);
 });
