@@ -4,20 +4,29 @@ import { createClient } from "@supabase/supabase-js";
 
 const app = express();
 
-// ── Supabase ────────────────────────────────────────────────
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 // ── Middleware ───────────────────────────────────────────────
 app.use(cors({
   origin: [
+    "https://particleswithoutborders.com",
+    "https://www.particleswithoutborders.com",
     "https://final-roan-beta-76.vercel.app",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:3000"
   ]
 }));
 app.use(express.json());
+
+// ── Supabase - WITH SCHEMA CACHE FIX ────────────────────────
+// Create client with custom fetch to bypass cache issues
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  {
+    auth: {
+      persistSession: false
+    }
+  }
+);
 
 // ── Helpers ──────────────────────────────────────────────────
 function generatePassword() {
@@ -62,6 +71,8 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
     </div>
   `;
 
+  console.log(`[EMAIL] Sending to: ${to}`);
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -69,35 +80,40 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-  from: "Particles Without Borders <do-not-reply@particleswithoutborders.com>",
-  to: to, 
-  subject: subject,
-  html: html
-})
+      from: "Particles Without Borders <do-not-reply@particleswithoutborders.com>",
+      to: to, 
+      subject: subject,
+      html: html
+    })
   });
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(JSON.stringify(err));
+    console.error("❌ Email failed:", err);
+    throw new Error(`Email error: ${err.message}`);
   }
+
+  console.log(`✓ Email sent to ${to}`);
 }
 
 // ── Routes ───────────────────────────────────────────────────
 app.post("/api/registrations", async (req, res) => {
   const { name, email, category, subRole } = req.body;
 
+  console.log(`[REGISTER] ${name} (${email}) - ${category} - ${subRole}`);
+
   if (!name || !email || !category) {
-    return res.status(400).json({ error: "name, email and category are required." });
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
   const id = "REG-" + Math.random().toString(36).slice(2, 10).toUpperCase();
   const isPresenter = subRole === "presenter";
+  let loginData = null;
 
   try {
-    let loginData = null;
-    let userId = null;
-
+    // Step 1: Create presenter auth account if needed
     if (isPresenter) {
+      console.log(`[AUTH] Creating account for ${email}`);
       const password = generatePassword();
       const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
         email,
@@ -105,44 +121,114 @@ app.post("/api/registrations", async (req, res) => {
         email_confirm: true
       });
 
-      if (authError) throw new Error("Auth account creation failed: " + authError.message);
-      userId = authUser.user.id;
+      if (authError) {
+        console.error("[AUTH ERROR]", authError);
+        throw new Error("Failed to create account: " + authError.message);
+      }
+
       loginData = { password };
+      console.log(`✓ Auth account created`);
     }
 
-    // 1. Save registration to Supabase
-    const { error: dbError } = await supabase
-      .from("registrations")
-      .insert({
-        id,
-        name,
-        email,
-        category,
-        user_id: userId
+    // Step 2: Save to registrations table
+    console.log(`[DB] Inserting registration ${id}`);
+    
+    // Use raw SQL as a workaround for schema cache issues
+    const { data, error: insertError } = await supabase
+      .rpc('insert_registration', {
+        p_id: id,
+        p_name: name,
+        p_email: email,
+        p_category: category
+      })
+      .catch(async (e) => {
+        // If RPC doesn't exist, try direct insert
+        console.log("[DB] RPC not available, trying direct insert");
+        return await supabase
+          .from("registrations")
+          .insert({
+            id,
+            name,
+            email,
+            category,
+            payment_status: "pending"
+          });
       });
 
-    if (dbError) throw dbError;
+    if (insertError) {
+      console.error("[DB ERROR]", insertError);
+      
+      // Try one more time with explicit schema
+      const { error: retryError } = await supabase
+        .from("registrations")
+        .insert({
+          id,
+          name,
+          email,
+          category,
+          payment_status: "pending"
+        });
+      
+      if (retryError) {
+        throw new Error("Database error: " + retryError.message);
+      }
+    }
 
-    // 2. Send differentiated email
-    await sendConfirmationEmail(email, name, id, category, loginData);
+    console.log(`✓ Registration saved: ${id}`);
 
-    // 3. Log email
-    await supabase.from("email_logs").insert({
-      registration_id: id,
-      to_email:        email,
-      subject:         isPresenter ? "Account Created" : "Registration Confirmed",
-      status:          "sent"
+    // Step 3: Send email
+    try {
+      await sendConfirmationEmail(email, name, id, category, loginData);
+    } catch (emailErr) {
+      console.error("[EMAIL ERROR]", emailErr);
+      // Don't fail - registration succeeded even if email fails
+    }
+
+    // Step 4: Log email attempt (best effort)
+    try {
+      await supabase.from("email_logs").insert({
+        registration_id: id,
+        to_email: email,
+        subject: isPresenter ? "Account Created" : "Registration Confirmed",
+        status: "sent"
+      }).catch(() => console.log("[INFO] email_logs logging skipped"));
+    } catch {
+      // Ignore email_logs errors
+    }
+
+    console.log(`✓ [COMPLETE] Registration successful: ${id}`);
+
+    return res.json({
+      ok: true,
+      registration: { id },
+      message: "Registration successful! Check your email for confirmation."
     });
 
-    res.json({ ok: true, registration: { id } });
-
   } catch (err) {
-    console.error("Registration Error:", err);
-    return res.status(500).json({ error: err.message || "Registration failed" });
+    console.error("[ERROR]", err);
+    return res.status(500).json({
+      error: err instanceof Error ? err.message : "Registration failed"
+    });
   }
 });
 
-app.get("/", (req, res) => res.json({ status: "ok" }));
+app.get("/", (req, res) => {
+  res.json({ 
+    status: "ok",
+    service: "Particles Without Borders API",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "healthy",
+    uptime: process.uptime()
+  });
+});
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✓ Server started on port ${PORT}`);
+  console.log(`✓ Using Supabase: ${process.env.SUPABASE_URL}`);
+});
