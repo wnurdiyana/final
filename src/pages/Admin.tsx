@@ -14,6 +14,7 @@ type Reg = {
   sub_role: string;
   paper_title: string;
   keywords: string;
+  abstract_file: string;
   dietary: string;
   visa: string;
   chairperson: string;
@@ -177,6 +178,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 
 export default function Admin() {
   const [token, setToken] = useState(() => sessionStorage.getItem("pwb_admin_token") ?? "");
+  const [adminId, setAdminId] = useState("");
   const [loginInput, setLoginInput] = useState("");
   const [loginError, setLoginError] = useState("");
   const [registrations, setRegistrations] = useState<Reg[]>([]);
@@ -197,7 +199,7 @@ export default function Admin() {
         setLoggedIn(false);
         sessionStorage.removeItem("pwb_admin_token");
         setToken("");
-        setLoginError("Incorrect password.");
+        setLoginError("Incorrect admin ID or password.");
         return;
       }
       const data = await res.json();
@@ -217,9 +219,23 @@ export default function Admin() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoginError("");
-    sessionStorage.setItem("pwb_admin_token", loginInput);
-    setToken(loginInput);
-    await fetchRegs(loginInput);
+    const adminToken = btoa(`${adminId}:${loginInput}`);
+    sessionStorage.setItem("pwb_admin_token", adminToken);
+    setToken(adminToken);
+    await fetchRegs(adminToken);
+  }
+
+  async function openAbstract(reg: Reg) {
+    try {
+      const res = await fetch(`/api/admin/registrations/${reg.id}/abstract`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Could not open abstract");
+      window.open(data.url, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Could not open abstract");
+    }
   }
 
   const filtered = registrations.filter((r) => {
@@ -249,6 +265,20 @@ export default function Admin() {
             <p className="text-muted-foreground text-sm mt-1">Particles Without Borders 2026</p>
           </div>
           <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-cyan-100 shadow-lg p-8 space-y-5">
+            <div>
+              <label className="text-sm font-semibold mb-2 block" htmlFor="adminId">
+                Admin ID
+              </label>
+              <input
+                id="adminId"
+                type="text"
+                required
+                value={adminId}
+                onChange={(e) => setAdminId(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                placeholder="Enter admin ID"
+              />
+            </div>
             <div>
               <label className="text-sm font-semibold mb-2 block" htmlFor="password">
                 Admin Password
@@ -467,6 +497,14 @@ export default function Admin() {
                                 <div><span className="text-muted-foreground">Theme:</span> {reg.theme || "—"}</div>
                                 <div><span className="text-muted-foreground">Paper title:</span> {reg.paper_title || "—"}</div>
                                 <div><span className="text-muted-foreground">Keywords:</span> {reg.keywords || "—"}</div>
+                                <div>
+                                  <span className="text-muted-foreground">Abstract:</span>{" "}
+                                  {reg.abstract_file ? (
+                                    <button onClick={() => openAbstract(reg)} className="text-primary font-semibold hover:underline">
+                                      Open abstract
+                                    </button>
+                                  ) : "—"}
+                                </div>
                               </div>
                               <div>
                                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Admin</div>
