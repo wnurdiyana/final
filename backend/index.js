@@ -67,7 +67,8 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
     throw new Error("RESEND_API_KEY is not configured in Vercel environment variables.");
   }
 
-  const isPresenter = !!loginData;
+  const isPresenter = String(category).toLowerCase().includes("presenter");
+  const hasDashboardAccount = !!loginData;
   const subject = `Registration Confirmed: ${registrationId} - Particles Without Borders 2026`;
   const safeName = escapeHtml(name);
   const safeRegistrationId = escapeHtml(registrationId);
@@ -76,21 +77,24 @@ async function sendConfirmationEmail(to, name, registrationId, category, loginDa
   const safePassword = loginData ? escapeHtml(loginData.password) : "";
   const dashboardUrl = `${process.env.PUBLIC_SITE_URL || "https://particleswithoutborders.com"}/dashboard`;
 
-  const accountBlock = isPresenter ? `
+  const accountBlock = hasDashboardAccount ? `
         <p style="margin: 0 0 8px 0;"><strong>Login Email:</strong> ${safeEmail}</p>
         <p style="margin: 0 0 8px 0;"><strong>Temporary Password:</strong> ${safePassword}</p>
-        <p style="margin: 16px 0 0 0;"><a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; background: #0e7490; color: #ffffff; padding: 10px 16px; border-radius: 999px; text-decoration: none; font-weight: 700;">Open Presenter Dashboard</a></p>
+        <p style="margin: 16px 0 0 0;"><a href="${escapeHtml(dashboardUrl)}" style="display: inline-block; background: #0e7490; color: #ffffff; padding: 10px 16px; border-radius: 999px; text-decoration: none; font-weight: 700;">Open Participant Dashboard</a></p>
   ` : "";
 
   const roleText = isPresenter
-    ? "Your presenter registration has been received and a secure submission account has been created for you."
+    ? "Your presenter registration has been received."
     : "Your listener registration has been received.";
+  const accountText = hasDashboardAccount
+    ? " A secure dashboard account has been created for you."
+    : "";
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #0f172a;">
       <h1 style="color: #0e7490; margin: 0 0 16px 0;">Registration Confirmed</h1>
       <p>Dear <strong>${safeName}</strong>,</p>
-      <p>Thank you for registering for <strong>Particles Without Borders 2026</strong>. ${roleText}</p>
+      <p>Thank you for registering for <strong>Particles Without Borders 2026</strong>. ${roleText}${accountText}</p>
       <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="margin: 0 0 8px 0;"><strong>Unique Registration ID:</strong> ${safeRegistrationId}</p>
         <p style="margin: 0 0 8px 0;"><strong>Category:</strong> ${safeCategory}</p>
@@ -239,12 +243,13 @@ app.post("/api/registrations", async (req, res) => {
 
   const id = generateRegistrationId();
   const isPresenter = subRole === "presenter";
+  const isReviewer = reviewer === "Yes";
 
   try {
     let loginData = null;
     let userId = null;
 
-    if (isPresenter) {
+    if (isPresenter || isReviewer) {
       const password = generatePassword();
       const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
         email,
@@ -350,7 +355,7 @@ app.get("/api/participant/registration", async (req, res) => {
     return res.status(401).json({ error: "Invalid or expired session." });
   }
 
-  const { data: registration, error: registrationError } = await supabase
+  let { data: registration, error: registrationError } = await supabase
     .from("registrations")
     .select("*")
     .eq("user_id", authData.user.id)
@@ -362,11 +367,45 @@ app.get("/api/participant/registration", async (req, res) => {
     return res.status(500).json({ error: registrationError.message });
   }
 
-  if (!registration) {
-    return res.status(404).json({ error: "No presenter registration found for this account." });
+  if (!registration && authData.user.email) {
+    const fallback = await supabase
+      .from("registrations")
+      .select("*")
+      .eq("email", authData.user.email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    registration = fallback.data;
+    registrationError = fallback.error;
   }
 
-  res.json({ registration });
+  if (registrationError) {
+    return res.status(500).json({ error: registrationError.message });
+  }
+
+  if (!registration) {
+    return res.status(404).json({ error: "No registration found for this account." });
+  }
+
+  let reviewPapers = [];
+
+  if (registration.reviewer === "Yes") {
+    const { data: papers, error: papersError } = await supabase
+      .from("registrations")
+      .select("id, name, affiliation, country, theme, paper_title, keywords, abstract_file, review_status, created_at")
+      .eq("sub_role", "presenter")
+      .neq("id", registration.id)
+      .order("created_at", { ascending: false });
+
+    if (papersError) {
+      return res.status(500).json({ error: papersError.message });
+    }
+
+    reviewPapers = papers || [];
+  }
+
+  res.json({ registration, reviewPapers });
 });
 
 app.get("/api/admin/registrations", requireAdmin, async (req, res) => {
