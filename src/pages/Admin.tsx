@@ -16,7 +16,7 @@ type Reg = {
   keywords: string;
   dietary: string;
   visa: string;
-  reviewer: string;
+  chairperson: string;
   payment_status: string;
   review_status: string;
   status: string;
@@ -460,7 +460,7 @@ export default function Admin() {
                                 <div><span className="text-muted-foreground">Country:</span> {reg.country || "—"}</div>
                                 <div><span className="text-muted-foreground">Dietary:</span> {reg.dietary || "None"}</div>
                                 <div><span className="text-muted-foreground">Visa needed:</span> {reg.visa || "—"}</div>
-                                <div><span className="text-muted-foreground">Reviewer:</span> {reg.reviewer || "—"}</div>
+                                <div><span className="text-muted-foreground">Chairperson:</span> {reg.chairperson || "—"}</div>
                               </div>
                               <div>
                                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Submission</div>
