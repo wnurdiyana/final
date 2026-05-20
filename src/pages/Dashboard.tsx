@@ -11,12 +11,31 @@ type Registration = {
   affiliation: string;
   country: string;
   theme: string;
+  sub_role: string;
   paper_title: string;
   keywords: string;
+  abstract_file: string;
+  student_id_file: string;
+  dietary: string;
+  visa: string;
+  reviewer: string;
   payment_status: string;
   review_status: string;
   invoice_id: string;
   invoice_sent: boolean;
+  created_at: string;
+};
+
+type ReviewPaper = {
+  id: string;
+  name: string;
+  affiliation: string;
+  country: string;
+  theme: string;
+  paper_title: string;
+  keywords: string;
+  abstract_file: string;
+  review_status: string;
   created_at: string;
 };
 
@@ -66,6 +85,7 @@ export default function Dashboard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [registration, setRegistration] = useState<Registration | null>(null);
+  const [reviewPapers, setReviewPapers] = useState<ReviewPaper[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -84,6 +104,7 @@ export default function Dashboard() {
       }
 
       setRegistration(data.registration);
+      setReviewPapers(data.reviewPapers ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load dashboard.");
       if (err instanceof Error && err.message.includes("session")) {
@@ -132,6 +153,7 @@ export default function Dashboard() {
     sessionStorage.removeItem(SESSION_KEY);
     setSession(null);
     setRegistration(null);
+    setReviewPapers([]);
     setEmail("");
     setPassword("");
   }
@@ -142,7 +164,7 @@ export default function Dashboard() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <img src={logoUrl} alt="Particles Without Borders" className="h-16 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-extrabold gradient-text">Presenter Dashboard</h1>
+            <h1 className="text-2xl font-extrabold gradient-text">Participant Dashboard</h1>
             <p className="text-muted-foreground text-sm mt-1">Log in with the email and temporary password from your confirmation email.</p>
           </div>
 
@@ -197,7 +219,7 @@ export default function Dashboard() {
           <Link href="/" className="flex items-center gap-3">
             <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
-              <div className="font-bold text-sm gradient-text">Presenter Dashboard</div>
+              <div className="font-bold text-sm gradient-text">Participant Dashboard</div>
               <div className="text-[10px] text-muted-foreground tracking-wide uppercase">Particles Without Borders 2026</div>
             </div>
           </Link>
@@ -242,18 +264,73 @@ export default function Dashboard() {
             </section>
 
             <section className="bg-white rounded-2xl border border-cyan-100 shadow-sm p-6 sm:p-8">
-              <h2 className="text-lg font-bold mb-4">Submission Details</h2>
+              <h2 className="text-lg font-bold mb-4">Registration Details</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <Detail label="Category" value={registration.category} />
+                <Detail label="Role" value={registration.sub_role} />
                 <Detail label="Affiliation" value={registration.affiliation} />
                 <Detail label="Country" value={registration.country} />
-                <Detail label="Theme" value={registration.theme} />
-                <Detail label="Paper Title" value={registration.paper_title} />
-                <Detail label="Keywords" value={registration.keywords} />
-                <Detail label="Invoice ID" value={registration.invoice_id} />
+                <Detail label="Dietary" value={registration.dietary} />
+                <Detail label="Visa Letter" value={registration.visa} />
+                <Detail label="Reviewer" value={registration.reviewer} />
                 <Detail label="Registered" value={registration.created_at ? new Date(registration.created_at).toLocaleString() : "-"} />
               </div>
             </section>
+
+            <section className="bg-white rounded-2xl border border-cyan-100 shadow-sm p-6 sm:p-8">
+              <h2 className="text-lg font-bold mb-4">Abstract and Submission</h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <Detail label="Theme" value={registration.theme} />
+                <Detail label="Paper Title" value={registration.paper_title} />
+                <Detail label="Keywords" value={registration.keywords} />
+                <Detail label="Abstract Uploaded" value={registration.abstract_file} />
+                <Detail label="Student ID Uploaded" value={registration.student_id_file} />
+              </div>
+            </section>
+
+            <section className="bg-white rounded-2xl border border-cyan-100 shadow-sm p-6 sm:p-8">
+              <h2 className="text-lg font-bold mb-4">Invoice and Payment</h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <Detail label="Invoice ID" value={registration.invoice_id} />
+                <Detail label="Invoice Sent" value={registration.invoice_sent} />
+                <Detail label="Payment Status" value={registration.payment_status} />
+              </div>
+            </section>
+
+            {registration.reviewer === "Yes" && (
+              <section className="bg-white rounded-2xl border border-cyan-100 shadow-sm p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                  <h2 className="text-lg font-bold">Papers for Review</h2>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{reviewPapers.length} papers</span>
+                </div>
+
+                {reviewPapers.length === 0 ? (
+                  <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-6 text-sm text-muted-foreground">
+                    No papers are available for review yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {reviewPapers.map((paper) => (
+                      <div key={paper.id} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                          <div>
+                            <div className="font-semibold">{paper.paper_title || "Untitled paper"}</div>
+                            <div className="text-xs text-muted-foreground mt-1">{paper.theme || "No theme selected"}</div>
+                          </div>
+                          <div className="font-mono text-xs text-muted-foreground">{paper.id}</div>
+                        </div>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-3">
+                          <Detail label="Author" value={paper.name} />
+                          <Detail label="Affiliation" value={paper.affiliation} />
+                          <Detail label="Keywords" value={paper.keywords} />
+                          <Detail label="Abstract File" value={paper.abstract_file} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
           </div>
         ) : null}
       </main>
