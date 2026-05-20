@@ -185,9 +185,6 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           <Link href="/sponsorship" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
             Sponsorship
           </Link>
-          <Link href="/dashboard" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
-            Dashboard
-          </Link>
         </nav>
         <button className="lg:hidden p-2 rounded-md hover:bg-cyan-50" onClick={() => setOpen((v) => !v)} aria-label="Toggle menu">
           <div className="w-6 h-0.5 bg-foreground mb-1.5" />
@@ -208,9 +205,6 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           </Link>
           <Link href="/sponsorship" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
             Sponsorship
-          </Link>
-          <Link href="/dashboard" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
-            Dashboard
           </Link>
         </div>
       )}
@@ -438,6 +432,7 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [resentConfirmation, setResentConfirmation] = useState(false);
   const [category, setCategory] = useState<Category>(initCategory);
   const [role, setRole] = useState<Role>(initRole);
   const [selectedTheme, setSelectedTheme] = useState<string>("");
@@ -481,7 +476,7 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
       subRole: isPresenter ? "presenter" : "listener",
       dietary: f.get("dietary") ?? "",
       visa: f.get("visa"),
-      reviewer: f.get("reviewer"),
+      chairperson: f.get("chairperson"),
       paymentStatus: "Pending",
     };
     if (isPresenter) {
@@ -505,6 +500,7 @@ try {
 }
       if (!res.ok) throw new Error(data.error ?? "Registration failed");
       setSavedId(data.registration?.id ?? null);
+      setResentConfirmation(!!data.resent);
       setSubmitted(true);
 
       // Force scroll to registration section to prevent jump to Organizers
@@ -526,8 +522,12 @@ try {
           <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
           </div>
-          <h3 className="text-2xl font-bold mb-2">Registration successful</h3>
-          <p className="text-muted-foreground">A confirmation email with your unique registration ID has been sent to your inbox.</p>
+          <h3 className="text-2xl font-bold mb-2">{resentConfirmation ? "Registration email resent" : "Registration successful"}</h3>
+          <p className="text-muted-foreground">
+            {resentConfirmation
+              ? "Your existing registration confirmation has been sent to your inbox."
+              : "A confirmation email with your unique registration ID has been sent to your inbox."}
+          </p>
           <p className="mt-3 text-sm text-emerald-700 font-medium">Your invoice and payment instructions will arrive by email shortly.</p>
           {savedId && <p className="mt-3 text-xs text-muted-foreground font-mono">Unique Registration ID: {savedId}</p>}
           <button
@@ -633,7 +633,7 @@ try {
             <Field label="Dietary Requirements" name="dietary" placeholder="e.g. vegetarian, halal, allergies" />
             <div className="grid sm:grid-cols-2 gap-4">
               <SelectField label="Visa invitation letter required?" name="visa" required options={["No", "Yes"]} />
-              <SelectField label="Willing to be a reviewer?" name="reviewer" required options={["No", "Yes"]} />
+              <SelectField label="Willing to be a chairperson?" name="chairperson" required options={["No", "Yes"]} />
             </div>
           </div>
 
