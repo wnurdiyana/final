@@ -437,6 +437,7 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
   const [role, setRole] = useState<Role>(initRole);
   const [selectedTheme, setSelectedTheme] = useState<string>("");
   const [abstractFileName, setAbstractFileName] = useState<string>("");
+  const [abstractFile, setAbstractFile] = useState<File | null>(null);
   const [studentIdFileName, setStudentIdFileName] = useState<string>("");
   const [emailVal, setEmailVal] = useState("");
 
@@ -466,6 +467,16 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
     setError(null);
     setSubmitting(true);
     const f = new FormData(e.currentTarget);
+    async function fileToBase64(file: File) {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+        reader.onerror = () => reject(new Error("Could not read abstract file."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    try {
     const payload: Record<string, unknown> = {
       category: `${cat.name} — ${isPresenter ? "Presenter" : "Listener"}`,
       name: f.get("name"),
@@ -482,10 +493,15 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
     if (isPresenter) {
       payload.paperTitle = f.get("paperTitle");
       payload.keywords = f.get("keywords");
-      payload.abstractFile = abstractFileName;
+      if (abstractFile) {
+        payload.abstractFile = {
+          name: abstractFile.name,
+          type: abstractFile.type,
+          data: await fileToBase64(abstractFile),
+        };
+      }
     }
     if (category === "student") payload.studentIdFile = studentIdFileName;
-    try {
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -621,7 +637,11 @@ try {
               <Field label="Keywords (comma separated)" name="keywords" required />
               <div>
                 <label className="text-sm font-semibold mb-2 block">Abstract upload (PDF / DOC / DOCX) <span className="text-destructive">*</span></label>
-                <input type="file" accept=".pdf,.doc,.docx" required onChange={(e) => setAbstractFileName(e.target.files?.[0]?.name ?? "")}
+                <input type="file" accept=".pdf,.doc,.docx" required onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  setAbstractFile(file);
+                  setAbstractFileName(file?.name ?? "");
+                }}
                   className="block w-full text-sm file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:bg-primary file:text-primary-foreground file:font-semibold hover:file:opacity-90" />
                 {abstractFileName && <p className="text-xs text-emerald-600 font-medium mt-1.5">✓ Selected: {abstractFileName}</p>}
               </div>
