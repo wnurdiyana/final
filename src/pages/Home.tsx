@@ -185,6 +185,9 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           <Link href="/sponsorship" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
             Sponsorship
           </Link>
+          <Link href="/dashboard" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
+            Dashboard
+          </Link>
         </nav>
         <button className="lg:hidden p-2 rounded-md hover:bg-cyan-50" onClick={() => setOpen((v) => !v)} aria-label="Toggle menu">
           <div className="w-6 h-0.5 bg-foreground mb-1.5" />
@@ -205,6 +208,9 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           </Link>
           <Link href="/sponsorship" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
             Sponsorship
+          </Link>
+          <Link href="/dashboard" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
+            Dashboard
           </Link>
         </div>
       )}
