@@ -30,11 +30,9 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.options("*", cors());
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "15mb" }));
 
-function generatePassword() {
-  return `${Math.random().toString(36).slice(-8).toUpperCase()}!${Math.random().toString(36).slice(-2).toUpperCase()}`;
-}
+const ABSTRACT_BUCKET = "abstracts";
 
 function generateRegistrationId() {
   return `PWB-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
@@ -47,6 +45,68 @@ function escapeHtml(value = "") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function sanitizeFileName(fileName = "file") {
+  return String(fileName)
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 140);
+}
+
+async function ensureAbstractBucket() {
+  const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+
+  if (listError) {
+    throw new Error(`Storage bucket lookup failed: ${listError.message}`);
+  }
+
+  if (buckets.some((bucket) => bucket.name === ABSTRACT_BUCKET)) {
+    return;
+  }
+
+  const { error: createError } = await supabase.storage.createBucket(ABSTRACT_BUCKET, {
+    public: false,
+    fileSizeLimit: 10 * 1024 * 1024,
+    allowedMimeTypes: [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ]
+  });
+
+  if (createError) {
+    throw new Error(`Storage bucket creation failed: ${createError.message}`);
+  }
+}
+
+async function uploadAbstractFile(registrationId, file) {
+  if (!file?.data || !file?.name) {
+    return null;
+  }
+
+  await ensureAbstractBucket();
+
+  const fileBuffer = Buffer.from(String(file.data), "base64");
+
+  if (fileBuffer.length > 10 * 1024 * 1024) {
+    throw new Error("Abstract file is too large. Maximum size is 10 MB.");
+  }
+
+  const safeName = sanitizeFileName(file.name);
+  const path = `${registrationId}/${Date.now()}-${safeName}`;
+  const { error } = await supabase.storage
+    .from(ABSTRACT_BUCKET)
+    .upload(path, fileBuffer, {
+      contentType: file.type || "application/octet-stream",
+      upsert: true
+    });
+
+  if (error) {
+    throw new Error(`Abstract upload failed: ${error.message}`);
+  }
+
+  return path;
 }
 
 async function logEmail({ registrationId, to, subject, status }) {
@@ -143,96 +203,40 @@ async function sendEmail({ to, subject, html }) {
   return { subject, html };
 }
 
-async function findAuthUserByEmail(email) {
-  let page = 1;
-  const perPage = 100;
+function validateAdminToken(token) {
+  if (process.env.ADMIN_USERS) {
+    const decoded = Buffer.from(token || "", "base64").toString("utf8");
+    const separator = decoded.indexOf(":");
 
-  while (page <= 10) {
-    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
-
-    if (error) {
-      throw new Error(`Auth user lookup failed: ${error.message}`);
+    if (separator === -1) {
+      return false;
     }
 
-    const user = data.users.find((candidate) => candidate.email?.toLowerCase() === email.toLowerCase());
-
-    if (user) {
-      return user;
-    }
-
-    if (data.users.length < perPage) {
-      return null;
-    }
-
-    page += 1;
+    const adminId = decoded.slice(0, separator);
+    const password = decoded.slice(separator + 1);
+    return process.env.ADMIN_USERS
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+      .some((entry) => {
+        const entrySeparator = entry.indexOf(":");
+        return entrySeparator !== -1 &&
+          entry.slice(0, entrySeparator) === adminId &&
+          entry.slice(entrySeparator + 1) === password;
+      });
   }
 
-  return null;
-}
-
-async function createOrFindDashboardUser(email) {
-  const password = generatePassword();
-  const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true
-  });
-
-  if (!authError) {
-    return {
-      userId: authUser.user.id,
-      loginData: { password }
-    };
-  }
-
-  if (!authError.message.toLowerCase().includes("already")) {
-    throw new Error(`Auth account creation failed: ${authError.message}`);
-  }
-
-  const existingUser = await findAuthUserByEmail(email);
-
-  if (!existingUser) {
-    throw new Error("Auth account already exists, but could not be found for linking.");
-  }
-
-  const resetPassword = generatePassword();
-  const { error: updateError } = await supabase.auth.admin.updateUserById(existingUser.id, {
-    password: resetPassword,
-    email_confirm: true
-  });
-
-  if (updateError) {
-    throw new Error(`Auth password reset failed: ${updateError.message}`);
-  }
-
-  return {
-    userId: existingUser.id,
-    loginData: { password: resetPassword, resetExistingAccount: true }
-  };
-}
-
-async function resetDashboardPassword(userId) {
-  const password = generatePassword();
-  const { error } = await supabase.auth.admin.updateUserById(userId, {
-    password,
-    email_confirm: true
-  });
-
-  if (error) {
-    throw new Error(`Auth password reset failed: ${error.message}`);
-  }
-
-  return { password, resetExistingAccount: true };
+  return !!process.env.ADMIN_PASSWORD && token === process.env.ADMIN_PASSWORD;
 }
 
 function requireAdmin(req, res, next) {
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, "");
 
-  if (!process.env.ADMIN_PASSWORD) {
-    return res.status(500).json({ error: "ADMIN_PASSWORD is not configured in Vercel environment variables." });
+  if (!process.env.ADMIN_USERS && !process.env.ADMIN_PASSWORD) {
+    return res.status(500).json({ error: "ADMIN_USERS is not configured in Vercel environment variables." });
   }
 
-  if (!token || token !== process.env.ADMIN_PASSWORD) {
+  if (!token || !validateAdminToken(token)) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -367,6 +371,8 @@ app.post("/api/registrations", async (req, res) => {
       });
     }
 
+    const abstractPath = await uploadAbstractFile(id, abstractFile);
+
     const { error: dbError } = await supabase
       .from("registrations")
       .insert({
@@ -384,7 +390,7 @@ app.post("/api/registrations", async (req, res) => {
         visa,
         chairperson,
         payment_status: paymentStatus || "Pending",
-        abstract_file: abstractFile,
+        abstract_file: abstractPath || abstractFile?.name || null,
         student_id_file: studentIdFile
       });
 
@@ -428,6 +434,34 @@ app.get("/api/admin/registrations", requireAdmin, async (req, res) => {
   }
 
   res.json({ registrations: data || [] });
+});
+
+app.get("/api/admin/registrations/:id/abstract", requireAdmin, async (req, res) => {
+  const registrationId = req.params.id;
+
+  const { data: registration, error: fetchError } = await supabase
+    .from("registrations")
+    .select("abstract_file")
+    .eq("id", registrationId)
+    .single();
+
+  if (fetchError || !registration) {
+    return res.status(404).json({ error: fetchError?.message || "Registration not found" });
+  }
+
+  if (!registration.abstract_file) {
+    return res.status(404).json({ error: "No abstract file uploaded for this registration." });
+  }
+
+  const { data, error } = await supabase.storage
+    .from(ABSTRACT_BUCKET)
+    .createSignedUrl(registration.abstract_file, 60 * 10);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json({ url: data.signedUrl });
 });
 
 app.post("/api/admin/registrations/:id/invoice", requireAdmin, async (req, res) => {
