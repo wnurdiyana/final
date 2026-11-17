@@ -220,7 +220,7 @@ export default function Dashboard() {
             <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
               <div className="font-bold text-sm gradient-text">Participant Dashboard</div>
-              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">Particles Without Borders 2026</div>
+              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">Particles Without Borders 2027</div>
             </div>
           </Link>
           <button onClick={logout} className="px-4 py-2 rounded-full text-sm font-semibold border border-slate-200 hover:bg-white">

@@ -304,7 +304,7 @@ export default function Programme() {
             <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
               <div className="font-bold text-sm gradient-text">Particles Without Borders</div>
-              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 16 Nov 2026</div>
+              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 27 & 28 Sep 2027</div>
             </div>
           </Link>
           <Link href="/" className="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
@@ -317,12 +317,12 @@ export default function Programme() {
       <section className="pt-32 pb-16 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-emerald-50" />
         <div className="relative max-w-7xl mx-auto">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">16 November 2026</div>
+          <div className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">27 & 28 September 2027</div>
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">
             Conference <span className="gradient-text">Programme</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed mb-8">
-            A full day of keynotes, plenary talks, parallel technical sessions and networking — all at the Kuala Lumpur Convention Centre.
+            Two days of keynotes, plenary talks, parallel technical sessions and networking — all at the Kuala Lumpur Convention Centre.
           </p>
 
           {/* Stats bar */}
@@ -368,7 +368,7 @@ export default function Programme() {
                 </svg>
               </div>
               <div>
-                <div className="font-bold text-lg">Sunday, 16 November 2026</div>
+                <div className="font-bold text-lg">Monday & Tuesday, 27 & 28 September 2027</div>
                 <div className="text-sm text-muted-foreground">Kuala Lumpur Convention Centre (KLCC)</div>
               </div>
             </div>
@@ -394,7 +394,7 @@ export default function Programme() {
 
       <footer className="bg-gradient-to-br from-slate-900 via-cyan-950 to-emerald-950 text-white py-10 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center text-sm text-cyan-200/70">
-          © 2026 Particles Without Borders · KLCC, Kuala Lumpur
+          © 2027 Particles Without Borders · KLCC, Kuala Lumpur
         </div>
       </footer>
     </div>

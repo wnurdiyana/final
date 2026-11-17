@@ -58,12 +58,12 @@ const TOPICS = [
 ];
 
 const DATES = [
-  { date: "1 Jan2027", label: "Abstract Submission Opens" },
-  { date: "31 Aug 2026", label: "Abstract Submission Deadline" },
-  { date: "15 Sep 2026", label: "Notification of Acceptance" },
-  { date: "30 Sep 2026", label: "Early Bird Registration Deadline" },
-  { date: "31 Oct 2026", label: "Final Registration Deadline" },
-  { date: "16 Nov 2026", label: "Conference Day — KLCC, Kuala Lumpur" },
+  { date: "1 Jan 2027", label: "Abstract Submission Opens" },
+  { date: "31 May 2027", label: "Abstract Submission Deadline" },
+  { date: "30 Jun 2027", label: "Notification of Acceptance" },
+  { date: "31 Jul 2027", label: "Early Bird Registration Deadline" },
+  { date: "31 Aug 2027", label: "Final Registration Deadline" },
+  { date: "27 & 28 Sep 2027", label: "Conference Days — KLCC, Kuala Lumpur" },
 ];
 
 type Category = "industry" | "academic" | "student";
@@ -163,7 +163,7 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
           <div className="hidden sm:block leading-tight">
             <div className="font-bold text-sm gradient-text">Particles Without Borders</div>
-            <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 16 Nov 2026</div>
+            <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 27 & 28 Sep 2027</div>
           </div>
         </button>
         <nav className="hidden lg:flex items-center gap-1">
@@ -222,7 +222,7 @@ function Hero({ onNav }: { onNav: (id: string) => void }) {
         <div className="fade-in backdrop-blur-sm">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 border border-slate-200 text-slate-700 text-xs font-medium uppercase tracking-wider mb-6 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            16 November 2026 · KLCC, Kuala Lumpur
+            27 & 28 September 2027 · KLCC, Kuala Lumpur
           </div>
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-5 tracking-tight">
             Particles<br />
@@ -270,7 +270,7 @@ function About() {
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 text-lg text-muted-foreground leading-relaxed space-y-4">
           <p><strong className="text-foreground">Particles Without Borders</strong> brings together a global community of researchers, industry leaders and policymakers tackling one of the most pressing environmental challenges of our time — airborne particulate matter, its sources, its transport across boundaries and its impact on human and planetary health.</p>
-          <p>Hosted at the iconic Kuala Lumpur Convention Centre (KLCC), the 2026 edition explores air pollution, marine emissions, energy systems, nanoparticles and AI modelling — and the sustainable pathways that connect them.</p>
+          <p>Hosted at the iconic Kuala Lumpur Convention Centre (KLCC), the 2027 edition explores air pollution, marine emissions, energy systems, nanoparticles and AI modelling — and the sustainable pathways that connect them.</p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-primary to-secondary text-white p-8 shadow-xl">
           <div className="text-5xl font-extrabold mb-2">300+</div>
@@ -356,7 +356,7 @@ function Registration() {
         <div>
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-emerald-100 text-emerald-800 text-sm font-semibold">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Early Bird ends 30 September 2026 — save up to 20%
+            Early Bird ends 31 July 2027 — save up to 20%
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {CATEGORIES.map((cat) => (
@@ -661,7 +661,7 @@ try {
           <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-emerald-50 border border-cyan-200 text-sm flex items-center justify-between gap-4 flex-wrap">
             <div>
               <div className="font-bold">{cat.name} — {isPresenter ? "Presenter" : "Listener"}</div>
-              <div className="text-muted-foreground text-xs mt-0.5">Early Bird deadline: 30 September 2026</div>
+              <div className="text-muted-foreground text-xs mt-0.5">Early Bird deadline: 31 July 2027</div>
             </div>
             <div className="text-right">
               <div className="text-2xl font-extrabold gradient-text">{fee.early}</div>
@@ -845,7 +845,7 @@ function Contact() {
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary mb-1">Date</div>
-            <div className="text-lg font-semibold">16 November 2026</div>
+            <div className="text-lg font-semibold">27 & 28 September 2027</div>
           </div>
         </div>
         <div className="rounded-2xl overflow-hidden border border-cyan-100 shadow-sm min-h-[280px]">
@@ -867,7 +867,7 @@ function Footer() {
             <div className="text-xs text-cyan-200/80">Air Quality, Health &amp; Sustainable Solutions</div>
           </div>
         </div>
-        <div className="text-sm text-cyan-200/70 text-center md:text-right">© 2026 Particles Without Borders · KLCC, Kuala Lumpur</div>
+        <div className="text-sm text-cyan-200/70 text-center md:text-right">© 2027 Particles Without Borders · KLCC, Kuala Lumpur</div>
       </div>
     </footer>
   );

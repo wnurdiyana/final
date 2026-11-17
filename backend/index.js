@@ -128,7 +128,7 @@ async function sendConfirmationEmail(to, name, registrationId, category) {
   }
 
   const isPresenter = String(category).toLowerCase().includes("presenter");
-  const subject = `Registration Confirmed: ${registrationId} - Particles Without Borders 2026`;
+  const subject = `Registration Confirmed: ${registrationId} - Particles Without Borders 2027`;
   const safeName = escapeHtml(name);
   const safeRegistrationId = escapeHtml(registrationId);
   const safeCategory = escapeHtml(category);
@@ -141,7 +141,7 @@ async function sendConfirmationEmail(to, name, registrationId, category) {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #0f172a;">
       <h1 style="color: #0e7490; margin: 0 0 16px 0;">Registration Confirmed</h1>
       <p>Dear <strong>${safeName}</strong>,</p>
-      <p>Thank you for registering for <strong>Particles Without Borders 2026</strong>. ${roleText}</p>
+      <p>Thank you for registering for <strong>Particles Without Borders 2027</strong>. ${roleText}</p>
       <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="margin: 0 0 8px 0;"><strong>Unique Registration ID:</strong> ${safeRegistrationId}</p>
         <p style="margin: 0 0 8px 0;"><strong>Category:</strong> ${safeCategory}</p>
@@ -150,7 +150,7 @@ async function sendConfirmationEmail(to, name, registrationId, category) {
       <p>Your invoice, payment due date, and payment link will be sent to this email shortly. Abstract notifications will be sent separately.</p>
       <p>Questions? Email us at <a href="mailto:secretariat@particleswithoutborders.com">secretariat@particleswithoutborders.com</a></p>
       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders - KLCC, Kuala Lumpur - 16 November 2026</p>
+      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders - KLCC, Kuala Lumpur - 27 & 28 September 2027</p>
     </div>
   `;
 
@@ -278,12 +278,12 @@ function buildInvoiceEmail(registration, invoice) {
   const paymentBlock = paymentLink
     ? `<p style="margin: 20px 0;"><a href="${escapeHtml(paymentLink)}" style="display: inline-block; background: #0e7490; color: #ffffff; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 700;">Pay Online</a></p>`
     : `<p style="margin: 20px 0; color: #b45309;">Payment link is not configured yet. The secretariat will send payment instructions separately.</p>`;
-  const subject = `Invoice ${invoice.id} - Particles Without Borders 2026`;
+  const subject = `Invoice ${invoice.id} - Particles Without Borders 2027`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #0f172a;">
       <h1 style="color: #0e7490; margin: 0 0 16px 0;">Conference Invoice</h1>
       <p>Dear <strong>${safeName}</strong>,</p>
-      <p>Thank you for registering for <strong>Particles Without Borders 2026</strong>. Your invoice details are below.</p>
+      <p>Thank you for registering for <strong>Particles Without Borders 2027</strong>. Your invoice details are below.</p>
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="margin: 0 0 8px 0;"><strong>Invoice ID:</strong> ${safeInvoiceId}</p>
         <p style="margin: 0 0 8px 0;"><strong>Registration ID:</strong> ${safeRegistrationId}</p>
@@ -295,7 +295,7 @@ function buildInvoiceEmail(registration, invoice) {
       <p>Please keep your invoice ID and registration ID for payment reference.</p>
       <p>Questions? Email us at <a href="mailto:secretariat@particleswithoutborders.com">secretariat@particleswithoutborders.com</a></p>
       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders - KLCC, Kuala Lumpur - 16 November 2026</p>
+      <p style="color: #94a3b8; font-size: 12px;">Particles Without Borders - KLCC, Kuala Lumpur - 27 & 28 September 2027</p>
     </div>
   `;
 
@@ -542,12 +542,12 @@ app.post("/api/admin/registrations/:id/decision", requireAdmin, async (req, res)
     return res.status(404).json({ error: fetchError?.message || "Registration not found" });
   }
 
-  const subject = `Submission ${decision} - Particles Without Borders 2026`;
+  const subject = `Submission ${decision} - Particles Without Borders 2027`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #0f172a;">
       <h1 style="color: #0e7490; margin: 0 0 16px 0;">Submission ${escapeHtml(decision)}</h1>
       <p>Dear <strong>${escapeHtml(registration.name)}</strong>,</p>
-      <p>Your submission for <strong>Particles Without Borders 2026</strong> has been marked as <strong>${escapeHtml(decision)}</strong>.</p>
+      <p>Your submission for <strong>Particles Without Borders 2027</strong> has been marked as <strong>${escapeHtml(decision)}</strong>.</p>
       <p><strong>Registration ID:</strong> ${escapeHtml(registration.id)}</p>
       <p>Questions? Email us at <a href="mailto:secretariat@particleswithoutborders.com">secretariat@particleswithoutborders.com</a></p>
     </div>

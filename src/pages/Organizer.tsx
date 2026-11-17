@@ -71,7 +71,7 @@ export default function Organizer() {
             <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
               <div className="font-bold text-sm gradient-text">Particles Without Borders</div>
-              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 16 Nov 2026</div>
+              <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 27 & 28 Sep 2027</div>
             </div>
           </Link>
           <Link href="/" className="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
@@ -89,7 +89,7 @@ export default function Organizer() {
             Organisers, Partners<br className="hidden sm:block" /> &amp; <span className="gradient-text">Sponsors</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            Particles Without Borders 2026 is made possible through the collaboration of leading institutions and industry partners dedicated to advancing air quality science globally.
+            Particles Without Borders 2027 is made possible through the collaboration of leading institutions and industry partners dedicated to advancing air quality science globally.
           </p>
         </div>
       </section>
@@ -231,7 +231,7 @@ export default function Organizer() {
 
       <footer className="bg-gradient-to-br from-slate-900 via-cyan-950 to-emerald-950 text-white py-10 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center text-sm text-cyan-200/70">
-          © 2026 Particles Without Borders · KLCC, Kuala Lumpur
+          © 2027 Particles Without Borders · KLCC, Kuala Lumpur
         </div>
       </footer>
     </div>

@@ -262,7 +262,7 @@ export default function Admin() {
           <div className="text-center mb-8">
             <img src={logoUrl} alt="PWB" className="h-16 w-auto mx-auto mb-4" />
             <h1 className="text-2xl font-extrabold gradient-text">Admin Dashboard</h1>
-            <p className="text-muted-foreground text-sm mt-1">Particles Without Borders 2026</p>
+            <p className="text-muted-foreground text-sm mt-1">Particles Without Borders 2027</p>
           </div>
           <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-cyan-100 shadow-lg p-8 space-y-5">
             <div>
@@ -316,7 +316,7 @@ export default function Admin() {
           <img src={logoUrl} alt="PWB" className="h-9 w-auto" />
           <div>
             <div className="font-bold text-sm gradient-text">Admin Dashboard</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Particles Without Borders 2026</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Particles Without Borders 2027</div>
           </div>
         </div>
         <div className="flex items-center gap-3">
