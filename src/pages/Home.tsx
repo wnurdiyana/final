@@ -836,7 +836,7 @@ function Contact() {
         <div className="bg-white p-8 rounded-2xl border border-cyan-100 shadow-sm space-y-4">
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary mb-1">Email</div>
-            <a href="mailto:secretariat@particleswithoutborders.org" className="text-lg font-semibold hover:underline">secretariat@particleswithoutborders.org</a>
+            <a href="mailto:admin@particleswithoutborders.com" className="text-lg font-semibold hover:underline">admin@particleswithoutborders.com</a>
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary mb-1">Venue</div>
