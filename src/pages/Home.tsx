@@ -58,7 +58,7 @@ const TOPICS = [
 ];
 
 const DATES = [
-  { date: "1 Jan 2027", label: "Abstract Submission Opens" },
+  { date: "1 Feb 2027", label: "Abstract Submission Opens" },
   { date: "31 May 2027", label: "Abstract Submission Deadline" },
   { date: "30 Jun 2027", label: "Notification of Acceptance" },
   { date: "31 Jul 2027", label: "Early Bird Registration Deadline" },
