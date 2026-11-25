@@ -154,7 +154,7 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
           <img src={logoUrl} alt="Particles Without Borders" className="h-12 w-auto" />
           <div className="hidden sm:block leading-tight">
             <div className="font-bold text-sm gradient-text">Particles Without Borders</div>
-            <div className="text-[10px] text-muted-foreground tracking-wide uppercase">KLCC · 27 & 28 Sep 2027</div>
+            <div className="text-[10px] text-muted-foreground tracking-wide uppercase">Putrajaya · 27 & 28 Sep 2027</div>
           </div>
         </button>
         <nav className="hidden lg:flex items-center gap-1">
@@ -841,7 +841,7 @@ function Contact() {
           </div>
         </div>
         <div className="rounded-2xl overflow-hidden border border-cyan-100 shadow-sm min-h-[280px]">
-          <iframe title="KLCC location" src="https://www.openstreetmap.org/export/embed.html?bbox=101.7080%2C3.1500%2C101.7220%2C3.1620&layer=mapnik&marker=3.1560%2C101.7150" className="w-full h-full min-h-[280px] border-0" />
+          <iframe title="Putrajaya location" src="https://www.openstreetmap.org/export/embed.html?bbox=101.7080%2C3.1500%2C101.7220%2C3.1620&layer=mapnik&marker=3.1560%2C101.7150" className="w-full h-full min-h-[280px] border-0" />
         </div>
       </div>
     </Section>
