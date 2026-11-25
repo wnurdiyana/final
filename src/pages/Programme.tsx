@@ -23,7 +23,7 @@ const PROGRAMME: Session[] = [
     end: "09:00",
     title: "Registration & Welcome Coffee",
     type: "break",
-    room: "Foyer, Level 2",
+    room: "TBC",
   },
   {
     time: "09:00",
@@ -38,52 +38,52 @@ const PROGRAMME: Session[] = [
   {
     time: "09:30",
     end: "10:15",
-    title: "Keynote I — Global Air Quality Challenges and the Role of Advanced Particle Monitoring",
+    title: "Keynote I",
     type: "keynote",
     speaker: "TBC",
-    affiliation: "Particles Plus, USA",
+    affiliation: "TBC",
     room: "Plenary Hall",
     chair: "Conference Chair",
     abstract:
-      "An overview of emerging air quality threats worldwide, with a focus on how state-of-the-art particle monitoring technologies are shaping policy and public health responses.",
+      "TBC",
   },
   {
     time: "10:15",
     end: "11:00",
-    title: "Keynote II — Airborne Particulates and Urban Health: Lessons from Southeast Asia",
+    title: "Keynote II",
     type: "keynote",
     speaker: "TBC",
-    affiliation: "Universiti Putra Malaysia",
+    affiliation: "TBC",
     room: "Plenary Hall",
     chair: "Conference Chair",
     abstract:
-      "Drawing on long-term monitoring datasets across Malaysian cities, this keynote examines the epidemiological link between PM2.5 exposure and respiratory health outcomes in tropical urban environments.",
+      "TBC",
   },
   {
     time: "11:00",
     end: "11:15",
     title: "Morning Coffee Break & Exhibition",
     type: "break",
-    room: "Foyer, Level 2",
+    room: "TBC",
   },
   {
     time: "11:15",
     end: "11:55",
-    title: "Keynote III — Microplastics in the Atmosphere: Detection, Transport and Deposition",
+    title: "Keynote III",
     type: "keynote",
     speaker: "TBC",
-    affiliation: "Northumbria University Newcastle, UK",
+    affiliation: "TBC",
     room: "Plenary Hall",
     chair: "TBC",
     abstract:
-      "This keynote presents cutting-edge findings on atmospheric microplastic concentrations, long-range transport pathways, and innovative detection methodologies developed in partnership with European environmental agencies.",
+      "TBC",
   },
   {
     time: "11:55",
     end: "13:00",
-    title: "Parallel Technical Sessions — Block A",
+    title: "Parallel Technical Sessions",
     type: "parallel",
-    room: "Rooms 1 & 2, Level 3",
+    room: "TBC",
     abstract:
       "Theme A1: Exposure Assessment & Health Risk (Room 1) · Theme A2: Indoor Air Quality Technologies (Room 2)",
   },
@@ -92,45 +92,45 @@ const PROGRAMME: Session[] = [
     end: "14:00",
     title: "Networking Lunch",
     type: "break",
-    room: "Banquet Hall, Level 2",
+    room: "TBC",
   },
   {
     time: "14:00",
     end: "14:40",
-    title: "Plenary — Smart Sensors and AI-Driven Air Quality Modelling",
+    title: "Plenary",
     type: "plenary",
     speaker: "TBC",
-    affiliation: "Asian Institute of Technology, Thailand",
+    affiliation: "TBC",
     room: "Plenary Hall",
     chair: "TBC",
     abstract:
-      "An exploration of how machine learning algorithms, IoT sensor networks and remote sensing platforms are converging to deliver real-time, city-scale air quality predictions.",
+      "TBC",
   },
   {
     time: "14:40",
     end: "15:20",
-    title: "Plenary — Marine Emissions and Transboundary Air Pollution in ASEAN Waters",
+    title: "Plenary",
     type: "plenary",
     speaker: "TBC",
-    affiliation: "GreenFleet Maritime",
+    affiliation: "TBC",
     room: "Plenary Hall",
     chair: "TBC",
     abstract:
-      "A case-study presentation on ship emission inventories, fuel switching impacts and monitoring strategies for maritime corridors in the Strait of Malacca.",
+      "TBC",
   },
   {
     time: "15:20",
     end: "15:35",
     title: "Afternoon Coffee Break & Poster Viewing",
     type: "break",
-    room: "Foyer, Level 2",
+    room: "TBC",
   },
   {
     time: "15:35",
     end: "16:30",
-    title: "Parallel Technical Sessions — Block B",
+    title: "Parallel Technical Sessions",
     type: "parallel",
-    room: "Rooms 1, 2 & 3, Level 3",
+    room: "TBC",
     abstract:
       "Theme B1: Aerosols & Emerging Contaminants (Room 1) · Theme B2: Remote Sensing & Modelling (Room 2) · Theme B3: Source Characterisation (Room 3)",
   },
@@ -139,27 +139,27 @@ const PROGRAMME: Session[] = [
     end: "17:00",
     title: "Poster Session & Award Judging",
     type: "poster",
-    room: "Foyer, Level 2",
+    room: "TBC",
     abstract:
-      "Presenters stand by their posters for discussion. Best Poster Award judging takes place during this session.",
+      "TBC",
   },
   {
     time: "17:00",
     end: "17:30",
     title: "Closing Ceremony, Awards & Announcements",
     type: "ceremony",
-    room: "Plenary Hall",
+    room: "TBC",
     abstract:
-      "Best Paper Award, Best Poster Award, and Best Student Paper Award presentations, followed by closing remarks and announcement of future conference editions.",
+      "TBC",
   },
   {
     time: "19:00",
     end: "21:30",
     title: "Networking Dinner (ticketed)",
     type: "break",
-    room: "Skyline Ballroom, KLCC",
+    room: "TBC",
     abstract:
-      "An exclusive evening reception for all registered delegates. Dress code: Smart casual.",
+      "TBC",
   },
 ];
 
@@ -369,7 +369,7 @@ export default function Programme() {
               </div>
               <div>
                 <div className="font-bold text-lg">Monday & Tuesday, 27 & 28 September 2027</div>
-                <div className="text-sm text-muted-foreground">Kuala Lumpur Convention Centre (KLCC)</div>
+                <div className="text-sm text-muted-foreground">Putrajaya</div>
               </div>
             </div>
 
@@ -394,7 +394,7 @@ export default function Programme() {
 
       <footer className="bg-gradient-to-br from-slate-900 via-cyan-950 to-emerald-950 text-white py-10 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center text-sm text-cyan-200/70">
-          © 2027 Particles Without Borders · KLCC, Kuala Lumpur
+          © 2027 Particles Without Borders · Putrajaya, Kuala Lumpur
         </div>
       </footer>
     </div>
