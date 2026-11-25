@@ -14,7 +14,6 @@ const NAV = [
   { id: "dates", label: "Important Dates" },
   { id: "registration", label: "Registration" },
   { id: "organizers", label: "Organizers" },
-  { id: "sponsors", label: "Sponsors" },
 ];
 
 const THEMES = [
@@ -30,15 +29,6 @@ const ORGANIZERS: Organizer[] = [
   { role: "Lead Organiser", name: "Particles Plus", logo: particlesPlusLogo, url: "https://www.particlesplus.com" },
   { role: "Academic Co-Organiser", name: "Universiti Putra Malaysia", logo: upmLogo, url: "https://www.upm.edu.my" },
   { role: "Research Co-Organiser", name: "Northumbria University Newcastle", logo: northumbriaLogo, url: "https://www.northumbria.ac.uk" },
-];
-
-type Sponsor = { tier: string; name: string; logo?: string; url?: string };
-const SPONSORS: Sponsor[] = [
-  { tier: "Gold", name: "GreenFleet Maritime" },
-  { tier: "Silver", name: "EcoMonitor Asia" },
-  { tier: "Silver", name: "Petronas Research" },
-  { tier: "Bronze", name: "Clean Air Coalition" },
-  { tier: "Bronze", name: "AirLink Sensors" },
 ];
 
 type Partner = { name: string; logo?: string; url?: string };
