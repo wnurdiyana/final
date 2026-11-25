@@ -54,7 +54,7 @@ const DATES = [
   { date: "30 Jun 2027", label: "Notification of Acceptance" },
   { date: "31 Jul 2027", label: "Early Bird Registration Deadline" },
   { date: "31 Aug 2027", label: "Final Registration Deadline" },
-  { date: "27 & 28 Sep 2027", label: "Conference Days — KLCC, Kuala Lumpur" },
+  { date: "27 & 28 Sep 2027", label: "Conference Days — Putrajaya, Kuala Lumpur" },
 ];
 
 type Category = "industry" | "academic" | "student";
@@ -206,7 +206,7 @@ function Hero({ onNav }: { onNav: (id: string) => void }) {
         <div className="fade-in backdrop-blur-sm">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 border border-slate-200 text-slate-700 text-xs font-medium uppercase tracking-wider mb-6 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            27 & 28 September 2027 · KLCC, Kuala Lumpur
+            27 & 28 September 2027 · Putrajaya, Kuala Lumpur
           </div>
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-5 tracking-tight">
             Particles<br />
@@ -254,7 +254,7 @@ function About() {
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 text-lg text-muted-foreground leading-relaxed space-y-4">
           <p><strong className="text-foreground">Particles Without Borders</strong> brings together a global community of researchers, industry leaders and policymakers tackling one of the most pressing environmental challenges of our time — airborne particulate matter, its sources, its transport across boundaries and its impact on human and planetary health.</p>
-          <p>Hosted at the iconic Kuala Lumpur Convention Centre (KLCC), the 2027 edition explores air pollution, marine emissions, energy systems, nanoparticles and AI modelling — and the sustainable pathways that connect them.</p>
+          <p>Hosted at the Putrajaya, Kuala Lumpur, the 2027 edition explores air pollution, marine emissions, energy systems, nanoparticles and AI modelling — and the sustainable pathways that connect them.</p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-primary to-secondary text-white p-8 shadow-xl">
           <div className="text-5xl font-extrabold mb-2">300+</div>
@@ -859,7 +859,7 @@ function Footer() {
             <div className="text-xs text-cyan-200/80">Air Quality, Health &amp; Sustainable Solutions</div>
           </div>
         </div>
-        <div className="text-sm text-cyan-200/70 text-center md:text-right">© 2027 Particles Without Borders · KLCC, Kuala Lumpur</div>
+        <div className="text-sm text-cyan-200/70 text-center md:text-right">© 2027 Particles Without Borders · Putrajaya, Kuala Lumpur</div>
       </div>
     </footer>
   );
