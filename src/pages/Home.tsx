@@ -832,8 +832,8 @@ function Contact() {
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary mb-1">Venue</div>
-            <div className="text-lg font-semibold">Kuala Lumpur Convention Centre (KLCC)</div>
-            <div className="text-muted-foreground">Jalan Pinang, 50088 Kuala Lumpur, Malaysia</div>
+            <div className="text-lg font-semibold">Putrajaya</div>
+            <div className="text-muted-foreground">Kuala Lumpur, Malaysia</div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary mb-1">Date</div>
