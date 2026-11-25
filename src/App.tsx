@@ -1,6 +1,6 @@
 import { Route, Switch } from "wouter";
 import Home from "./pages/Home";
-import Sponsorship from "./pages/Sponsorship";
+import CallForPapers from "./pages/CallForPapers";
 import Organizer from "./pages/Organizer";
 import Programme from "./pages/Programme";
 import Admin from "./pages/Admin";
@@ -9,7 +9,7 @@ export default function App() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/sponsorship" component={Sponsorship} />
+      <Route path="/call-for-papers" component={CallForPapers} />
       <Route path="/organizer" component={Organizer} />
       <Route path="/programme" component={Programme} />
       <Route path="/admin" component={Admin} />

@@ -208,20 +208,14 @@ export default function Organizer() {
       {/* Become a sponsor CTA */}
       <section className="py-20 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto p-10 rounded-3xl bg-gradient-to-br from-primary to-secondary text-white shadow-2xl text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3">Become a Sponsor or Partner</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-3">Partner With Us</h2>
           <p className="opacity-90 mb-6">
-            Join the growing list of organisations powering the conversation on air quality and sustainable solutions.
+            Join the organisations powering the global conversation on air quality and sustainable solutions.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              href="/sponsorship"
-              className="inline-block px-8 py-3.5 rounded-full bg-white text-primary font-semibold shadow-xl hover:-translate-y-0.5 transition"
-            >
-              View Sponsorship Packages
-            </Link>
+          <div className="flex justify-center">
             <a
-              href="mailto:secretariat@particleswithoutborders.org?subject=Sponsorship%20Enquiry"
-              className="inline-block px-8 py-3.5 rounded-full bg-white/20 border border-white/40 text-white font-semibold hover:bg-white/30 hover:-translate-y-0.5 transition"
+              href="mailto:admin@particleswithoutborders.com?subject=Partnership%20Enquiry"
+              className="inline-block px-8 py-3.5 rounded-full bg-white text-primary font-semibold shadow-xl hover:-translate-y-0.5 transition"
             >
               Contact Secretariat
             </a>

@@ -58,7 +58,7 @@ const TOPICS = [
 ];
 
 const DATES = [
-  { date: "1 Feb 2027", label: "Abstract Submission Opens" },
+  { date: "1Jan 2027", label: "Abstract Submission Opens" },
   { date: "31 May 2027", label: "Abstract Submission Deadline" },
   { date: "30 Jun 2027", label: "Notification of Acceptance" },
   { date: "31 Jul 2027", label: "Early Bird Registration Deadline" },
@@ -90,7 +90,7 @@ const CATEGORIES: CategoryConfig[] = [
     perks: ["Full conference access", "Lunch & coffee breaks", "Conference kit & e-certificate", "Networking dinner"],
     hasListener: true,
     presenterFee: { early: "MYR 400", regular: "MYR 500" },
-    listenerFee:  { early: "MYR 320", regular: "MYR 400" },
+    listenerFee: { early: "MYR 320", regular: "MYR 400" },
   },
   {
     key: "academic",
@@ -100,7 +100,7 @@ const CATEGORIES: CategoryConfig[] = [
     perks: ["Full conference access", "Lunch & coffee breaks", "Conference kit & e-certificate", "Networking dinner", "Publications access"],
     hasListener: true,
     presenterFee: { early: "MYR 200", regular: "MYR 250" },
-    listenerFee:  { early: "MYR 160", regular: "MYR 200" },
+    listenerFee: { early: "MYR 160", regular: "MYR 200" },
     requireUniEmail: true,
   },
   {
@@ -114,7 +114,7 @@ const CATEGORIES: CategoryConfig[] = [
   },
 ];
 
-const FREE_EMAIL_DOMAINS = ["gmail.com","yahoo.com","hotmail.com","outlook.com","live.com","icloud.com","me.com","aol.com","ymail.com","proton.me","protonmail.com"];
+const FREE_EMAIL_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "live.com", "icloud.com", "me.com", "aol.com", "ymail.com", "proton.me", "protonmail.com"];
 function isUniEmail(email: string) {
   const domain = email.split("@")[1]?.toLowerCase() ?? "";
   return domain.length > 0 && !FREE_EMAIL_DOMAINS.includes(domain);
@@ -171,19 +171,15 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
             <button
               key={n.id}
               onClick={() => onNav(n.id)}
-              className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
-                active === n.id ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-cyan-50"
-              }`}
+              className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${active === n.id ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-cyan-50"
+                }`}
             >
               {n.label}
             </button>
           ))}
-         
+
           <Link href="/programme" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
             Programme
-          </Link>
-          <Link href="/sponsorship" className="px-3 py-2 rounded-full text-sm font-medium text-foreground hover:bg-cyan-50">
-            Sponsorship
           </Link>
         </nav>
         <button className="lg:hidden p-2 rounded-md hover:bg-cyan-50" onClick={() => setOpen((v) => !v)} aria-label="Toggle menu">
@@ -199,12 +195,9 @@ function Header({ active, onNav }: { active: string; onNav: (id: string) => void
               {n.label}
             </button>
           ))}
-          
+
           <Link href="/programme" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
             Programme
-          </Link>
-          <Link href="/sponsorship" className="text-left px-4 py-2 rounded-md hover:bg-cyan-50 text-sm font-medium" onClick={() => setOpen(false)}>
-            Sponsorship
           </Link>
         </div>
       )}
@@ -285,17 +278,84 @@ function About() {
   );
 }
 
-function CallForPapers() {
+function CallForPapers({ onNav }: { onNav: (id: string) => void }) {
   return (
-    <Section id="papers" kicker="Call for Papers" title="Conference themes.">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {TOPICS.map((t, i) => (
-          <div key={i} className="group p-7 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl font-bold mb-4 group-hover:scale-110 transition-transform">{String(i + 1).padStart(2, "0")}</div>
-            <h3 className="text-xl font-bold mb-2">{t.title}</h3>
-            <p className="text-muted-foreground leading-relaxed">{t.desc}</p>
+    <Section id="papers" kicker="Call for Papers" title="Conference themes & announcement.">
+      <div className="grid lg:grid-cols-12 gap-8 items-start mb-6">
+        {/* Poster Figure */}
+        <div className="lg:col-span-5">
+          <div className="bg-white rounded-3xl border border-cyan-100 shadow-xl overflow-hidden sticky top-28">
+            <div className="relative group overflow-hidden bg-slate-50">
+              <img
+                src="/call-for-papers-poster.jpg"
+                alt="Particles Without Borders 2027 - Call for Papers / Save The Date"
+                className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+              <a
+                href="/call-for-papers-poster.jpg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-semibold gap-2 backdrop-blur-sm"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+                View Full Poster
+              </a>
+            </div>
+            <div className="p-5 flex items-center justify-between gap-3 bg-gradient-to-r from-cyan-50/60 to-emerald-50/60 border-t border-cyan-100">
+              <div>
+                <div className="font-bold text-sm text-foreground">Save the Date Poster</div>
+                <div className="text-xs text-muted-foreground">27 – 28 September 2027 · Putrajaya, Malaysia</div>
+              </div>
+              <a
+                href="/call-for-papers-poster.jpg"
+                download="Particles-Without-Borders-2027-Call-For-Papers.jpg"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition shadow-sm"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download
+              </a>
+            </div>
           </div>
-        ))}
+        </div>
+
+        {/* Topics List & Action */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-cyan-50 to-emerald-50 border border-cyan-100 mb-2">
+            <h3 className="text-xl font-bold mb-2">Invitation for Abstract Submissions</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+              We invite researchers, academics, industry experts, and policymakers to submit abstracts across our 5 conference themes. Share your breakthroughs and advance clean air solutions.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <span className="px-3 py-1.5 rounded-full bg-white border border-cyan-200 font-semibold text-primary">Abstract Opens: 1 Jan 2027</span>
+              <span className="px-3 py-1.5 rounded-full bg-white border border-cyan-200 font-semibold text-primary">Deadline: 31 May 2027</span>
+              <button
+                type="button"
+                onClick={() => onNav("registration")}
+                className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition cursor-pointer"
+              >
+                Submit Abstract →
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {TOPICS.map((t, i) => (
+              <div key={i} className="group p-5 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-md hover:border-cyan-300 transition-all flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-base font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div>
+                  <h4 className="text-base font-bold mb-1 text-foreground">{t.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </Section>
   );
@@ -477,43 +537,43 @@ function RegistrationForm({ initCategory, initRole }: { initCategory: Category; 
     }
 
     try {
-    const payload: Record<string, unknown> = {
-      category: `${cat.name} — ${isPresenter ? "Presenter" : "Listener"}`,
-      name: f.get("name"),
-      email: f.get("email"),
-      affiliation: f.get("affiliation"),
-      country: f.get("country"),
-      theme: selectedTheme,
-      subRole: isPresenter ? "presenter" : "listener",
-      dietary: f.get("dietary") ?? "",
-      visa: f.get("visa"),
-      chairperson: f.get("chairperson"),
-      paymentStatus: "Pending",
-    };
-    if (isPresenter) {
-      payload.paperTitle = f.get("paperTitle");
-      payload.keywords = f.get("keywords");
-      if (abstractFile) {
-        payload.abstractFile = {
-          name: abstractFile.name,
-          type: abstractFile.type,
-          data: await fileToBase64(abstractFile),
-        };
+      const payload: Record<string, unknown> = {
+        category: `${cat.name} — ${isPresenter ? "Presenter" : "Listener"}`,
+        name: f.get("name"),
+        email: f.get("email"),
+        affiliation: f.get("affiliation"),
+        country: f.get("country"),
+        theme: selectedTheme,
+        subRole: isPresenter ? "presenter" : "listener",
+        dietary: f.get("dietary") ?? "",
+        visa: f.get("visa"),
+        chairperson: f.get("chairperson"),
+        paymentStatus: "Pending",
+      };
+      if (isPresenter) {
+        payload.paperTitle = f.get("paperTitle");
+        payload.keywords = f.get("keywords");
+        if (abstractFile) {
+          payload.abstractFile = {
+            name: abstractFile.name,
+            type: abstractFile.type,
+            data: await fileToBase64(abstractFile),
+          };
+        }
       }
-    }
-    if (category === "student") payload.studentIdFile = studentIdFileName;
+      if (category === "student") payload.studentIdFile = studentIdFileName;
       const res = await fetch("/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-     let data;
+      let data;
 
-try {
-  data = await res.json();
-} catch {
-  throw new Error("Server did not return JSON");
-}
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Server did not return JSON");
+      }
       if (!res.ok) throw new Error(data.error ?? "Registration failed");
       setSavedId(data.registration?.id ?? null);
       setResentConfirmation(!!data.resent);
@@ -804,12 +864,6 @@ function Sponsors() {
           })}
         </div>
       </div>
-
-      <div className="mt-10">
-        <Link href="/sponsorship" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background font-semibold hover:opacity-90">
-          View sponsorship opportunities →
-        </Link>
-      </div>
     </Section>
   );
 }
@@ -902,8 +956,8 @@ export default function Home() {
       <main>
         <Hero onNav={handleNav} />
         <About />
-        <CallForPapers />
-         <Dates />
+        <CallForPapers onNav={handleNav} />
+        <Dates />
         <Registration />
         <Organizers />
         <Sponsors />
