@@ -33,34 +33,6 @@ const PARTNERS = [
   { name: "Malaysian Meteorological Dept.", url: "https://www.met.gov.my" },
 ];
 
-type Sponsor = { tier: "Gold" | "Silver" | "Bronze"; name: string; logo?: string; url?: string };
-const SPONSORS: Sponsor[] = [
-  { tier: "Gold", name: "Particles Plus", logo: "/particles-plus-logo.png", url: "https://www.particlesplus.com" },
-  { tier: "Gold", name: "GreenFleet Maritime" },
-  { tier: "Silver", name: "EcoMonitor Asia" },
-  { tier: "Silver", name: "Petronas Research" },
-  { tier: "Bronze", name: "Clean Air Coalition" },
-  { tier: "Bronze", name: "AirLink Sensors" },
-];
-
-const TIER_STYLE: Record<string, { badge: string; border: string; gradient: string }> = {
-  Gold: {
-    badge: "bg-amber-100 text-amber-800",
-    border: "border-amber-200",
-    gradient: "from-amber-400 to-yellow-500",
-  },
-  Silver: {
-    badge: "bg-slate-100 text-slate-700",
-    border: "border-slate-200",
-    gradient: "from-slate-300 to-slate-500",
-  },
-  Bronze: {
-    badge: "bg-orange-100 text-orange-800",
-    border: "border-orange-200",
-    gradient: "from-orange-400 to-amber-600",
-  },
-};
-
 export default function Organizer() {
   return (
     <div className="min-h-screen gradient-bg">
@@ -86,7 +58,7 @@ export default function Organizer() {
         <div className="relative max-w-7xl mx-auto">
           <div className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">Behind the Conference</div>
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">
-            Organisers, Partners<br className="hidden sm:block" /> &amp; <span className="gradient-text">Sponsors</span>
+            Organisers &amp; <span className="gradient-text">Partners</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
             Particles Without Borders 2027 is made possible through the collaboration of leading institutions and industry partners dedicated to advancing air quality science globally.
@@ -153,55 +125,6 @@ export default function Organizer() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* Sponsors */}
-      <section className="py-16 px-4 sm:px-6 bg-white border-t border-cyan-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-sm font-semibold uppercase tracking-widest text-primary mb-2">Sponsors</div>
-          <h2 className="text-3xl font-bold mb-10">Conference Sponsors</h2>
-
-          {(["Gold", "Silver", "Bronze"] as const).map((tier) => {
-            const tierSponsors = SPONSORS.filter((s) => s.tier === tier);
-            const style = TIER_STYLE[tier];
-            return (
-              <div key={tier} className="mb-10">
-                <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold mb-5 ${style.badge}`}>
-                  <div className={`w-3 h-3 rounded-full bg-gradient-to-br ${style.gradient}`} />
-                  {tier} Sponsor{tierSponsors.length > 1 ? "s" : ""}
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {tierSponsors.map((s, i) => {
-                    const inner = (
-                      <>
-                        {s.logo ? (
-                          <div className="h-16 flex items-center justify-start mb-4">
-                            <img src={s.logo} alt={s.name} className="max-h-full max-w-[140px] object-contain" />
-                          </div>
-                        ) : (
-                          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${style.gradient} flex items-center justify-center text-white font-extrabold text-lg shadow mb-4`}>
-                            {s.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-                          </div>
-                        )}
-                        <div className={`text-xs font-bold uppercase tracking-wider mb-1 ${style.badge.split(" ")[1]}`}>{tier} Sponsor</div>
-                        <div className="font-bold text-lg">{s.name}</div>
-                        {s.url && (
-                          <div className="mt-2 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Visit website →</div>
-                        )}
-                      </>
-                    );
-                    const cls = `group p-6 rounded-2xl bg-white border-2 ${style.border} shadow-sm flex flex-col transition-all`;
-                    return s.url ? (
-                      <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className={`${cls} hover:shadow-xl hover:-translate-y-0.5 hover:border-primary`}>{inner}</a>
-                    ) : (
-                      <div key={i} className={cls}>{inner}</div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
         </div>
       </section>
 

@@ -14,6 +14,7 @@ const NAV = [
   { id: "dates", label: "Important Dates" },
   { id: "registration", label: "Registration" },
   { id: "organizers", label: "Organizers" },
+  { id: "contact", label: "Contact" },
 ];
 
 const THEMES = [
@@ -753,7 +754,7 @@ function Field({ label, name, type = "text", required, placeholder }: { label: s
 function Organizers() {
   return (
     <Section id="organizers" kicker="Organised By" title="Meet the organizers.">
-      <div className="grid sm:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-3 gap-6 mb-16">
         {ORGANIZERS.map((o, i) => {
           const card = (
             <div className="group bg-white p-8 rounded-2xl border border-cyan-100 shadow-sm flex flex-col items-center text-center gap-5 hover:shadow-xl hover:-translate-y-1 transition-all">
@@ -779,62 +780,9 @@ function Organizers() {
             : <div key={i}>{card}</div>;
         })}
       </div>
-    </Section>
-  );
-}
-function Sponsors() {
-  const tierClass: Record<string, string> = {
-    Gold: "from-amber-400 to-yellow-500",
-    Silver: "from-slate-300 to-slate-400",
-    Bronze: "from-orange-400 to-amber-600",
-  };
-  return (
-    <Section id="sponsors" kicker="Sponsors & Partners" title="Powering the conversation.">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-        {SPONSORS.map((s, i) => {
-          const inner = (
-            <>
-              {s.logo ? (
-                <div className="w-16 h-16 rounded-xl bg-white border border-cyan-100 flex items-center justify-center p-1.5 shadow">
-                  <img src={s.logo} alt={s.name} className="max-h-full max-w-full object-contain" />
-                </div>
-              ) : (
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${tierClass[s.tier]} flex items-center justify-center text-white font-extrabold text-lg shadow`}>
-                  {s.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
-                </div>
-              )}
-              <div>
-                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">{s.tier} Sponsor</div>
-                <div className="font-bold">{s.name}</div>
-                {s.url && (
-                  <div className="text-xs text-primary mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Visit website →
-                  </div>
-                )}
-              </div>
-            </>
-          );
-          const cardClass =
-            "group bg-white p-6 rounded-2xl border border-cyan-100 shadow-sm flex items-center gap-4 transition-all";
-          return s.url ? (
-            <a
-              key={i}
-              href={s.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={`Visit ${s.name}`}
-              className={`${cardClass} hover:shadow-xl hover:-translate-y-0.5 hover:border-primary cursor-pointer`}
-            >
-              {inner}
-            </a>
-          ) : (
-            <div key={i} className={cardClass}>{inner}</div>
-          );
-        })}
-      </div>
 
       <div>
-        <h3 className="text-2xl font-bold mb-5">Partners</h3>
+        <h3 className="text-2xl font-bold mb-5">Supporting Partners</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {PARTNERS.map((p, i) => {
             const body = p.logo ? (
@@ -950,7 +898,6 @@ export default function Home() {
         <Dates />
         <Registration />
         <Organizers />
-        <Sponsors />
         <Contact />
       </main>
       <Footer />
