@@ -34,10 +34,10 @@ const ORGANIZERS: Organizer[] = [
 
 type Partner = { name: string; logo?: string; url?: string };
 const PARTNERS: Partner[] = [
-  { name: "Asian Institute of Technology" },
-  { name: "WHO Collaborating Centre" },
-  { name: "ASEAN Clean Air Network" },
-  { name: "Malaysian Meteorological Dept." },
+  { name: "Open for Partnership" },
+  { name: "Open for Partnership" },
+  { name: "Open for Partnership" },
+  { name: "Open for Partnership" },
 ];
 
 const TOPICS = [
